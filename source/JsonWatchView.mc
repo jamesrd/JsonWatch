@@ -18,6 +18,7 @@ class JsonWatchView extends WatchUi.WatchFace {
     var timeValue, dateValue, batteryValue, heartValue, stepsValue, messageValue;
     var doLayout = true;
     var is24Hour = false;
+    var backgroundColor = Graphics.COLOR_BLACK;
 
     function initialize() {
         WatchFace.initialize();
@@ -62,6 +63,7 @@ class JsonWatchView extends WatchUi.WatchFace {
         endLabel = getLabel("}", marginX, cy, Graphics.COLOR_LT_GRAY);
 
         is24Hour = System.getDeviceSettings().is24Hour;
+        backgroundColor = getApp().getProperty("BackgroundColor") as Number;
 
         doLayout = true;
     }
@@ -101,7 +103,7 @@ class JsonWatchView extends WatchUi.WatchFace {
         messageValue.setText(messageString);
 
 
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+        dc.setColor(Graphics.COLOR_TRANSPARENT, backgroundColor);
         dc.clear();
         startLabel.draw(dc);
         timeLabel.draw(dc);

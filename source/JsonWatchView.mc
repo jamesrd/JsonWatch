@@ -63,7 +63,7 @@ class JsonWatchView extends WatchUi.WatchFace {
         displayEntries.initializeEntries();
 
         is24Hour = System.getDeviceSettings().is24Hour;
-        backgroundColor = getApp().getProperty("BackgroundColor") as Number;
+        backgroundColor = Application.Properties.getValue("BackgroundColor") as Number;
 
         doLayout = true;
     }

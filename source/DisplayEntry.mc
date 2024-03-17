@@ -8,20 +8,20 @@ public class DisplayEntry {
     public var label as WatchUi.Text;
     public var value as WatchUi.Text;
 
-    public function initialize(n as String, x as Number, y as Number) {
+    public function initialize(n as String, x as Number, y as Number, labelColor as Graphics.ColorType, valueColor as Graphics.ColorType, font as Graphics.FontType) {
         name = n;
         var text = Lang.format("\"$1$\": ", [name]);
         label = new WatchUi.Text({
             :text=> text,
-            :color=> Graphics.COLOR_BLUE,
-            :font=> Graphics.FONT_XTINY,
+            :color=> labelColor,
+            :font=> font,
             :locX=> x,
             :locY=> y
         });
         value = new WatchUi.Text({
             :text=> "",
-            :color=> Graphics.COLOR_ORANGE,
-            :font=> Graphics.FONT_XTINY,
+            :color=> valueColor,
+            :font=> font,
             :locX=> x,
             :locY=> y
         });

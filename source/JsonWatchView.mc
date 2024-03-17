@@ -12,8 +12,8 @@ class JsonWatchView extends WatchUi.WatchFace {
     var showMessages = false;
     var height = 416;
     var width = 416;
+    var marginX = 0;
     var lineHeight = 34;
-    var marginX = 50;
     var displayEntries;
     var doLayout = true;
     var is24Hour = false;
@@ -23,6 +23,9 @@ class JsonWatchView extends WatchUi.WatchFace {
         showSteps = (Toybox has :ActivityMonitor);
         showHr = (ActivityMonitor has :getHeartRateHistory);
         showMessages = (DeviceSettings has :notificationCount);
+        if (System.getDeviceSettings().screenShape == System.SCREEN_SHAPE_ROUND) {
+            marginX = 50;
+        }
         WatchFace.initialize();
     }
 

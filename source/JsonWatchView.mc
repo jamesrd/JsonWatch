@@ -1,4 +1,5 @@
 import Toybox.Application;
+import Toybox.ActivityMonitor;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.System;
@@ -6,9 +7,9 @@ import Toybox.WatchUi;
 import Toybox.Time.Gregorian;
 
 class JsonWatchView extends WatchUi.WatchFace {
-    var steps = 1000;
-    var messages = 0;
-    var pulse = 68;
+    var showSteps = false;
+    var showHr = false;
+    var showMessages = false;
     var height = 416;
     var width = 416;
     var lineHeight = 34;
@@ -19,6 +20,9 @@ class JsonWatchView extends WatchUi.WatchFace {
     var backgroundColor = Graphics.COLOR_BLACK;
 
     function initialize() {
+        showSteps = (Toybox has :ActivityMonitor);
+        showHr = (ActivityMonitor has :getHeartRateHistory);
+        showMessages = (DeviceSettings has :notificationCount);
         WatchFace.initialize();
     }
 
@@ -40,9 +44,18 @@ class JsonWatchView extends WatchUi.WatchFace {
         displayEntries.addEntry("date");
         displayEntries.addEntry("battery");
         // below here - may be conditional based on watch abilities
-        displayEntries.addEntry("steps");
-        displayEntries.addEntry("pulse");
-        displayEntries.addEntry("messages");
+        if(showSteps) {
+            displayEntries.addEntry("steps");
+            showSteps = true;
+        }
+
+        if(showHr) {
+            displayEntries.addEntry("pulse");
+        }
+
+        if(showMessages) {
+            displayEntries.addEntry("messages");
+        }
 
         displayEntries.initializeEntries();
 
@@ -71,15 +84,23 @@ class JsonWatchView extends WatchUi.WatchFace {
         displayEntries.setValue("battery", batteryString);
 
         // below may not be available on all devices:
+        if(showSteps) {
+            var actInfo = ActivityMonitor.getInfo();
+            var stepsString = Lang.format("$1$", [actInfo.steps]);
+            displayEntries.setValue("steps", stepsString);
+        }
 
-        var stepsString = Lang.format("$1$", [steps]);
-        displayEntries.setValue("steps", stepsString);
+        if(showHr) {
+            var pulse = getHeartRate();
+            var pulseString = Lang.format("$1$", [pulse]);
+            displayEntries.setValue("pulse", pulseString);
+        }
 
-        var pulseString = Lang.format("$1$", [pulse]);
-        displayEntries.setValue("pulse", pulseString);
-
-        var messageString = Lang.format("$1$", [messages]);
-        displayEntries.setValue("messages", messageString);
+        if(showMessages) {
+            var messages = System.getDeviceSettings().notificationCount;
+            var messageString = Lang.format("$1$", [messages]);
+            displayEntries.setValue("messages", messageString);
+        }
 
         dc.setColor(Graphics.COLOR_TRANSPARENT, backgroundColor);
         dc.clear();
@@ -88,6 +109,22 @@ class JsonWatchView extends WatchUi.WatchFace {
             displayEntries.doLayout(dc);
         }
         doLayout = false;
+    }
+
+    function getHeartRate() as String {
+    	var hr="NaN";
+        var newHr=Activity.getActivityInfo().currentHeartRate;
+        if(newHr==null) {
+            var hrh=ActivityMonitor.getHeartRateHistory(1,true);
+            if(hrh!=null) {
+                var hrs=hrh.next();
+                if(hrs!=null && hrs.heartRate!=null && hrs.heartRate!=ActivityMonitor.INVALID_HR_SAMPLE) {
+                    newHr=hrs.heartRate;
+                }
+            }    	
+        }
+    	if(newHr!=null) {hr=newHr.toNumber();} 
+        return hr;
     }
 
     // Called when this View is removed from the screen. Save the

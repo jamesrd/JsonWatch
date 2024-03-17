@@ -3,6 +3,13 @@ import Toybox.WatchUi;
 import Toybox.Graphics;
 
 public class DisplayEntries {
+    // constants/settings
+    var font = Graphics.FONT_XTINY;
+    var bracketColor = Graphics.COLOR_LT_GRAY;
+    var labelColor = Graphics.COLOR_BLUE;
+    var valueColor = Graphics.COLOR_ORANGE;
+
+    // class values
     var centerY;
     var lineHeight;
     var indentX;
@@ -11,13 +18,10 @@ public class DisplayEntries {
     var entryNames as Array<String> = [];
     var values as Dictionary<String, String> = {};
     var startBracket, endBracket;
-    var bracketColor = Graphics.COLOR_LT_GRAY;
-    var labelColor = Graphics.COLOR_BLUE;
-    var valueColor = Graphics.COLOR_ORANGE;
     
-    public function initialize(cy as Number, lh as Number, indent as Number, margin as Number) {
+    public function initialize(cy as Number, indent as Number, margin as Number) {
         centerY = cy;
-        lineHeight = lh;
+        lineHeight = Graphics.getFontHeight(font);
         indentX = indent;
         marginX = margin;
     }
@@ -31,7 +35,7 @@ public class DisplayEntries {
         startBracket = new WatchUi.Text({
             :text=> "{",
             :color=> bracketColor,
-            :font=> Graphics.FONT_XTINY,
+            :font=> font,
             :locX=> marginX,
             :locY=> ey
         });
@@ -39,14 +43,14 @@ public class DisplayEntries {
         var xOffset = indentX + marginX;
         for(var i = 0; i < entryNames.size(); i++) {
             var en = entryNames[i];
-            var de = new DisplayEntry(en, xOffset, ey, labelColor, valueColor, Graphics.FONT_XTINY);
+            var de = new DisplayEntry(en, xOffset, ey, labelColor, valueColor, font);
             entries.add(de);
             ey += lineHeight;
         }
         endBracket = new WatchUi.Text({
             :text=> "}",
             :color=> bracketColor,
-            :font=> Graphics.FONT_XTINY,
+            :font=> font,
             :locX=> marginX,
             :locY=> ey
         });

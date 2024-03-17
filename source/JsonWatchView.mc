@@ -27,8 +27,6 @@ class JsonWatchView extends WatchUi.WatchFace {
         setLayout(Rez.Layouts.WatchFace(dc));
         height = dc.getHeight();
         width = dc.getWidth();
-
-        lineHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -37,7 +35,7 @@ class JsonWatchView extends WatchUi.WatchFace {
     function onShow() as Void {
         var indentX = 20;
         var centerY = height / 2;
-        displayEntries = new DisplayEntries(centerY, lineHeight, indentX, marginX);
+        displayEntries = new DisplayEntries(centerY, indentX, marginX);
         displayEntries.addEntry("time");
         displayEntries.addEntry("date");
         displayEntries.addEntry("battery");

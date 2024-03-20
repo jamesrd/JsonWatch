@@ -15,7 +15,6 @@ class JsonWatchView extends WatchUi.WatchFace {
     var marginX = 0;
     var lineHeight = 34;
     var displayEntries;
-    var doLayout = true;
     var is24Hour = false;
     var backgroundColor = Graphics.COLOR_BLACK;
 
@@ -34,6 +33,7 @@ class JsonWatchView extends WatchUi.WatchFace {
         setLayout(Rez.Layouts.WatchFace(dc));
         height = dc.getHeight();
         width = dc.getWidth();
+        backgroundColor = Application.Properties.getValue("BackgroundColor") as Number;
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -46,7 +46,7 @@ class JsonWatchView extends WatchUi.WatchFace {
         displayEntries.addEntry("time");
         displayEntries.addEntry("date");
         displayEntries.addEntry("battery");
-        // below here - may be conditional based on watch abilities
+
         if(showSteps) {
             displayEntries.addEntry("steps");
             showSteps = true;
@@ -63,15 +63,13 @@ class JsonWatchView extends WatchUi.WatchFace {
         displayEntries.initializeEntries();
 
         is24Hour = System.getDeviceSettings().is24Hour;
-        backgroundColor = Application.Properties.getValue("BackgroundColor") as Number;
 
-        doLayout = true;
+        displayEntries.doLayout = true;
     }
 
     // Update the view
     function onUpdate(dc as Dc) as Void {
-        // Get and show the current time
-        var clockTime = Gregorian.info(Time.now(), Time.FORMAT_SHORT); // System.getClockTime();
+        var clockTime = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
         var hours = clockTime.hour;
         if (!is24Hour) {
             if (hours > 12) {
@@ -86,7 +84,6 @@ class JsonWatchView extends WatchUi.WatchFace {
         var batteryString = Lang.format("\"$1$%\"", [systemStats.battery.format("%02.1f")]);
         displayEntries.setValue("battery", batteryString);
 
-        // below may not be available on all devices:
         if(showSteps) {
             var actInfo = ActivityMonitor.getInfo();
             var stepsString = Lang.format("$1$", [actInfo.steps]);
@@ -108,10 +105,7 @@ class JsonWatchView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_TRANSPARENT, backgroundColor);
         dc.clear();
         displayEntries.draw(dc);
-        if(doLayout) {
-            displayEntries.doLayout(dc);
-        }
-        doLayout = false;
+        displayEntries.doLayout = false;
     }
 
     function getHeartRate() as String {
@@ -134,6 +128,7 @@ class JsonWatchView extends WatchUi.WatchFace {
     // state of this View here. This includes freeing resources from
     // memory.
     function onHide() as Void {
+        displayEntries = null;
     }
 
     // The user has just looked at their watch. Timers and animations may be started here.

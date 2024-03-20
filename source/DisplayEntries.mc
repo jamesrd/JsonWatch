@@ -18,6 +18,8 @@ public class DisplayEntries {
     var entryNames as Array<String> = [];
     var values as Dictionary<String, String> = {};
     var startBracket, endBracket;
+
+    public var doLayout = true;
     
     public function initialize(cy as Number, indent as Number, margin as Number) {
         centerY = cy;
@@ -62,19 +64,16 @@ public class DisplayEntries {
 
     public function draw(dc) {
         startBracket.draw(dc);
+        endBracket.draw(dc);
         var ec = entries.size();
         for(var i = 0; i < ec; i++) {
             var de = entries[i];
+            de.label.draw(dc);
+            if(doLayout) {
+                de.positionValue();
+            }
             de.setValue(values[de.name], i == ec - 1);
-            de.draw(dc);
-        }
-        endBracket.draw(dc);
-    }
-
-    public function doLayout(dc) {
-        for(var i = 0; i < entryNames.size(); i++) {
-            var de = entries[i];
-            de.positionValue();
+            de.value.draw(dc);
         }
     }
 }
